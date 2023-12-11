@@ -10,6 +10,23 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Home'),
+      ),
+      body: Center(
+        child: Column(
+          children: [
+            Image.asset("assets/images/logo.png"),
+            ElevatedButton(
+              onPressed:() {
+                Navigator.pushNamed(context, "choose_options");
+              },
+              child: const Text("Jouer")
+            )
+          ],
+        )
+      ),
+    );
   }
 }
