@@ -23,8 +23,16 @@ class _HomeState extends State<Home> {
                 onPressed:() {
                   Navigator.pushNamed(context, "choose_options");
                 },
-                child: const Text("Jouer")
-              )
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: buttonPrimaryColor,
+                  padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 20),
+                  textStyle: const TextStyle(
+                    fontSize: 30,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                child: const Text("Jouer"),
+              ),
             ],
           )
         ),

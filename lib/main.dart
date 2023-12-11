@@ -19,10 +19,6 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Master Quizz',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
       debugShowCheckedModeBanner: false,
       routes: {
         '/home': (context) => const Home(),
