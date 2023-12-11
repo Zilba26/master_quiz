@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:master_quiz/ui/screens/home.dart';
-import 'package:master_quiz/ui/screens/choose_options.dart';
+import 'package:master_quiz/models/category.dart';
+import 'package:master_quiz/models/difficulty.dart';
 import 'package:master_quiz/ui/screens/question_page.dart';
 
 void main() {
@@ -24,12 +24,7 @@ class _MyAppState extends State<MyApp> {
         useMaterial3: true,
       ),
       debugShowCheckedModeBanner: false,
-      routes: {
-        '/home': (context) => const Home(),
-        '/question': (context) => const QuestionPage(),
-        '/result': (context) => const ChooseOptions(),
-      },
-      initialRoute: '/home',
+      home: const QuestionPage(category: Category.jeuxVideo, difficulty: Difficulty.medium,),
     );
   }
 }
