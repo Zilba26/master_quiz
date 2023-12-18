@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:master_quiz/ui/components/main_button.dart';
 
 import '../../constantes.dart';
 
@@ -32,22 +33,11 @@ class _HomeState extends State<Home> {
               ),
               Padding(
                 padding: const EdgeInsets.only(bottom: 50),
-                child: ElevatedButton(
+                child: MainButton(
                   onPressed:() {
                     Navigator.pushNamed(context, "choose_options");
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: buttonPrimaryColor,
-                    padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 20),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(100),
-                    ),
-                    textStyle: const TextStyle(
-                      fontSize: 30,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  child: const Text("Jouer"),
+                  }, text: 'Jouer', fontSize: 30,
+
                 ),
               ),
             ],
