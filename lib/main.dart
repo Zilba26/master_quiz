@@ -23,7 +23,7 @@ class _MyAppState extends State<MyApp> {
       routes: {
         '/home': (context) => const Home(),
         '/question': (context) => const QuestionPage(),
-        '/result': (context) => const ChooseOptions(),
+        '/options': (context) => const ChooseOptions(),
       },
       initialRoute: '/home',
     );
