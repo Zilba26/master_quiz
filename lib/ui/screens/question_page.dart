@@ -5,6 +5,7 @@ import 'package:master_quiz/repositories/quiz_api.dart';
 import 'package:master_quiz/ui/components/main_button.dart';
 import 'package:stop_watch_timer/stop_watch_timer.dart';
 
+import '../../constantes.dart';
 import '../../models/category.dart';
 
 class QuestionPage extends StatefulWidget {
@@ -72,7 +73,7 @@ class _QuestionPageState extends State<QuestionPage> {
     AppBar appBar = AppBar();
     return Scaffold(
       body: quiz == null ? const Center(child: CircularProgressIndicator()) : Container(
-        color: const Color.fromRGBO(32, 40, 73, 1),
+        color: backgroundColor,
         width: double.infinity,
         height: double.infinity,
         child: Padding(

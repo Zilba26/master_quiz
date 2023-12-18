@@ -39,4 +39,42 @@ class QuizApi {
   Future<List<Quiz>> getQuizByCategoryAndDifficulty(Category category, Difficulty difficulty, [int? limit]) async {
     return await getQuiz('?category=${category.key}&difficulty=${difficulty.key}${limit == null ? '' : '&limit=$limit'}');
   }
+
+  Future<List<String>> getCategories() async {
+    final http.Response response = await http.get(Uri.parse('$baseUrl/categories'));
+    if (response.statusCode == 200) {
+      final List<String> categories = [];
+      final dynamic json = jsonDecode(response.body);
+      if (json.containsKey('categories')) {
+        final List<dynamic> results = json['categories'];
+        for (String result in results) {
+          categories.add(result);
+        }
+        return categories;
+      } else {
+        throw Exception('No results');
+      }
+    } else {
+      throw Exception('Failed to load categories');
+    }
+  }
+
+  Future<List<String>> getDifficulties() async {
+    final http.Response response = await http.get(Uri.parse('$baseUrl/difficulties'));
+    if (response.statusCode == 200) {
+      final List<String> difficulties = [];
+      final dynamic json = jsonDecode(response.body);
+      if (json.containsKey('difficulties')) {
+        final List<dynamic> results = json['difficulties'];
+        for (String result in results) {
+          difficulties.add(result);
+        }
+        return difficulties;
+      } else {
+        throw Exception('No results');
+      }
+    } else {
+      throw Exception('Failed to load difficulties');
+    }
+  }
 }

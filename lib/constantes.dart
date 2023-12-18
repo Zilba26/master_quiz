@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-const backgroundColor = Color.fromRGBO(32, 40, 73, 1);
+const backgroundColor = Color.fromRGBO(7,16,42,1);
 const buttonPrimaryColor = Color.fromRGBO(7,127,236,1);
 const buttonSecondaryColor = Color.fromRGBO(37,141,238,1);
 const questionTitleColor = Color.fromRGBO(140,149,189,1);

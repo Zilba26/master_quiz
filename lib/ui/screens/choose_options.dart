@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:master_quiz/ui/components/main_button.dart';
+import 'package:master_quiz/models/category.dart';
+
+import '../../constantes.dart';
+import '../../repositories/quiz_api.dart';
 
 class ChooseOptions extends StatefulWidget {
   const ChooseOptions({Key? key}) : super(key: key);
@@ -8,22 +13,17 @@ class ChooseOptions extends StatefulWidget {
 }
 
 class _ChooseOptionsState extends State<ChooseOptions> {
-  List<String> categories = ['Catégorie 1', 'Catégorie 2', 'Catégorie 3'];
+  List<String> categories = Category.values.map((e) => e.toString()).toList();
   List<String> difficulties = ['Facile', 'Moyen', 'Difficile'];
 
-  String selectedCategory = 'Catégorie 1';
+  String selectedCategory = Category.all.toString();
   String selectedDifficulty = 'Facile';
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        decoration: const BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage("assets/images/fusee.png"),
-            fit: BoxFit.cover,
-          ),
-        ),
+        color: backgroundColor,
         height: double.infinity,
         width: double.infinity,
         child: Center(
@@ -32,12 +32,14 @@ class _ChooseOptionsState extends State<ChooseOptions> {
             children: [
               const Text(
                 'Sélectionnez la catégorie',
-                style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold, color: Colors.white),
               ),
-              SizedBox(height: 20.0),
+              const SizedBox(height: 20.0),
               // Sélecteur de catégorie
               DropdownButton<String>(
                 value: selectedCategory,
+                style: const TextStyle(color: Colors.white),
+                dropdownColor: bordersColor,
                 onChanged: (String? newValue) {
                   setState(() {
                     selectedCategory = newValue!;
@@ -52,12 +54,14 @@ class _ChooseOptionsState extends State<ChooseOptions> {
               ),
               const Text(
                 'Sélectionnez la difficulté',
-                style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold, color: Colors.white),
               ),
               const SizedBox(height: 10.0),
               // Sélecteur de difficulté
               DropdownButton<String>(
                 value: selectedDifficulty,
+                style: const TextStyle(color: Colors.white),
+                dropdownColor: bordersColor,
                 onChanged: (String? newValue) {
                   setState(() {
                     selectedDifficulty = newValue!;
@@ -71,12 +75,16 @@ class _ChooseOptionsState extends State<ChooseOptions> {
                 }).toList(),
               ),
               const SizedBox(height: 20.0),
-              ElevatedButton(
+              MainButton(
+                text: 'Jouer',
+                fontSize: 30.0,
                 onPressed: () {
-                  // Ajoutez ici le code pour traiter le bouton "Jouer"
-                  // Utilisez les valeurs sélectionnées : selectedCategory et selectedDifficulty
-                },
-                child: Text('Jouer'),
+                  Navigator.pushNamed(context, "game", arguments: {
+                    'category': selectedCategory,
+                    'difficulty': selectedDifficulty
+                  }
+                  );
+              },
               ),
             ],
           ),
