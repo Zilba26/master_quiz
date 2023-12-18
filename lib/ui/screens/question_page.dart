@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:master_quiz/models/difficulty.dart';
 import 'package:master_quiz/models/quiz.dart';
 import 'package:master_quiz/repositories/quiz_api.dart';
+import 'package:master_quiz/ui/components/main_button.dart';
 import 'package:stop_watch_timer/stop_watch_timer.dart';
 
 import '../../models/category.dart';
@@ -152,7 +153,7 @@ class _QuestionPageState extends State<QuestionPage> {
                 )).toList(),
               ),
               const Spacer(),
-              ElevatedButton(
+              MainButton(
                 onPressed: () {
                   if (answersGuess[_selectedIndex] == null) return;
                   if (_selectedIndex < _maxIndex - 1) {
@@ -202,12 +203,7 @@ class _QuestionPageState extends State<QuestionPage> {
                     );
                   }
                 },
-                style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all(Colors.blue),
-                  padding: MaterialStateProperty.all(const EdgeInsets.symmetric(horizontal: 40, vertical: 15)),
-                  shape: MaterialStateProperty.all(const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(100))))
-                ),
-                child: const Text('Next', style: TextStyle(fontSize: 22, color: Colors.white))
+                text: 'Next',
               ),
               const SizedBox(height: 50,),
             ],
