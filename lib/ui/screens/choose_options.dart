@@ -3,7 +3,6 @@ import 'package:master_quiz/ui/components/main_button.dart';
 import 'package:master_quiz/models/category.dart';
 
 import '../../constantes.dart';
-import '../../repositories/quiz_api.dart';
 
 class ChooseOptions extends StatefulWidget {
   const ChooseOptions({Key? key}) : super(key: key);

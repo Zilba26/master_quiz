@@ -15,15 +15,26 @@ enum Category {
   final String key;
 
   @override
-  toString() => {
-    'all': 'Toutes les catégories',
-    'art_litterature': 'Art et littérature',
-    'tv_cinema': 'TV et cinéma',
-    'jeux_videos': 'Jeux vidéos',
-    'musique': 'Musique',
-    'sport': 'Sport',
-    'actu_politique': 'Actualité et politique',
-    'culture_generale': 'Culture générale',
-  }[key]!;
-
+  String toString() {
+    switch (this) {
+      case Category.all:
+        return 'Toutes les catégories';
+      case Category.artLitterature:
+        return 'Art et Littérature';
+      case Category.tvCinema:
+        return 'TV et Cinéma';
+      case Category.jeuxVideo:
+        return 'Jeux Vidéos';
+      case Category.musique:
+        return 'Musique';
+      case Category.sport:
+        return 'Sport';
+      case Category.actuPolitique:
+        return 'Actualité et Politique';
+      case Category.cultureGenerale:
+        return 'Culture Générale';
+      default:
+        return '';
+    }
+  }
 }
