@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:master_quiz/models/difficulty.dart';
 import 'package:master_quiz/models/quiz.dart';
 import 'package:master_quiz/repositories/quiz_api.dart';
+import 'package:stop_watch_timer/stop_watch_timer.dart';
 
 import '../../models/category.dart';
 
@@ -21,8 +22,10 @@ class _QuestionPageState extends State<QuestionPage> {
   List<Quiz>? quiz;
   int _selectedIndex = 0;
   int _maxIndex = 10;
+  final StopWatchTimer _stopwatch = StopWatchTimer();
 
-  String? answerGuess;
+  late List<String?> answersGuess;
+  final List<int> timesAnswers = [];
 
   @override
   void initState() {
@@ -30,19 +33,43 @@ class _QuestionPageState extends State<QuestionPage> {
     super.initState();
   }
 
+  @override
+  void dispose() {
+    _stopwatch.dispose();
+    super.dispose();
+  }
+
+  void resetGame() async {
+    _stopwatch.onResetTimer();
+    _selectedIndex = 0;
+    await loadQuiz();
+    timesAnswers.clear();
+    setState(() {});
+  }
+
   Future<void> loadQuiz() async {
     QuizApi quizApi = QuizApi();
     quiz = await quizApi.getQuizByCategoryAndDifficulty(widget.category, widget.difficulty, _maxIndex);
     if (quiz!.length < _maxIndex) _maxIndex = quiz!.length;
+    answersGuess = List.generate(_maxIndex, (index) => null);
+    _stopwatch.onStartTimer();
     setState(() {});
+  }
+
+  int getScore() {
+    int score = 0;
+    for (int i = 0; i < _maxIndex; i++) {
+      if (quiz![i].correctAnswer == answersGuess[i]) {
+        score++;
+      }
+    }
+    return score;
   }
 
   @override
   Widget build(BuildContext context) {
+    AppBar appBar = AppBar();
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.category.name),
-      ),
       body: quiz == null ? const Center(child: CircularProgressIndicator()) : Container(
         color: const Color.fromRGBO(32, 40, 73, 1),
         width: double.infinity,
@@ -50,8 +77,27 @@ class _QuestionPageState extends State<QuestionPage> {
         child: Padding(
           padding: const EdgeInsets.symmetric( horizontal: 32.0),
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const SizedBox(height: 50,),
+              SizedBox(height: appBar.preferredSize.height),
+              StreamBuilder(
+                stream: _stopwatch.rawTime,
+                builder: (context, snap) {
+                  final value = snap.data;
+                  if (value == null) return const Text("");
+                  Color color;
+                  if (value < 20000) {
+                    color = Colors.white;
+                  } else if (value < 30000) {
+                    color = Colors.orange;
+                  } else {
+                    color = Colors.red;
+                  }
+                  final displayTime = StopWatchTimer.getDisplayTime(value, hours: false);
+                  return Text(displayTime, style: TextStyle(color: color, fontSize: 30));
+                }
+              ),
+              const SizedBox(height: 30,),
               Row(
                 children: [
                   RichText(
@@ -70,7 +116,7 @@ class _QuestionPageState extends State<QuestionPage> {
                 children: quiz![_selectedIndex].allAnswers.map((answer) => GestureDetector(
                   onTap: () {
                     setState(() {
-                      answerGuess = answer;
+                      answersGuess[_selectedIndex] = answer;
                     });
                   },
                   child: Container(
@@ -88,7 +134,7 @@ class _QuestionPageState extends State<QuestionPage> {
                           margin: const EdgeInsets.only(right: 14),
                           width: 30,
                           height: 30,
-                          decoration: answer == answerGuess
+                          decoration: answer == answersGuess[_selectedIndex]
                             ? BoxDecoration(
                               borderRadius: BorderRadius.circular(30),
                               color: Colors.blue
@@ -96,7 +142,7 @@ class _QuestionPageState extends State<QuestionPage> {
                               borderRadius: BorderRadius.circular(30),
                               border: Border.all(color: Colors.grey.withOpacity(0.5), width: 3)
                             ),
-                          child: answerGuess == answer
+                          child: answersGuess[_selectedIndex] == answer
                             ? const Icon(Icons.check, color: Colors.white,)
                             : const SizedBox(),
                         )
@@ -108,13 +154,52 @@ class _QuestionPageState extends State<QuestionPage> {
               const Spacer(),
               ElevatedButton(
                 onPressed: () {
+                  if (answersGuess[_selectedIndex] == null) return;
                   if (_selectedIndex < _maxIndex - 1) {
                     setState(() {
                       _selectedIndex++;
-                      answerGuess = null;
+                      timesAnswers.add(_stopwatch.rawTime.value);
+                      _stopwatch.onResetTimer();
+                      _stopwatch.onStartTimer();
                     });
                   } else {
-                    //TODO: Go to result page
+                    timesAnswers.add(_stopwatch.rawTime.value);
+                    _stopwatch.onStopTimer();
+                    showDialog(
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                          title: const Text('Quiz terminé'),
+                          content: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text("Score: ${getScore()}", style: const TextStyle(fontSize: 25, fontWeight: FontWeight.bold),),
+                              const SizedBox(height: 20,),
+                              const Text("Vous avez battu votre record", style: TextStyle(fontSize: 16),),
+                              const SizedBox(height: 10,),
+                              const Text("Record: TODO", style: TextStyle(fontSize: 16),)
+                            ],
+                          ),
+                          actionsAlignment: MainAxisAlignment.center,
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                                //Navigator.pop(context);
+                              },
+                              child: const Text('Accueil')
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                                resetGame();
+                              },
+                              child: const Text('Rejouer')
+                            )
+                          ],
+                        );
+                      }
+                    );
                   }
                 },
                 style: ButtonStyle(
