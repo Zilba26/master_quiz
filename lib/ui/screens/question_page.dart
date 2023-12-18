@@ -154,6 +154,7 @@ class _QuestionPageState extends State<QuestionPage> {
               ),
               const Spacer(),
               MainButton(
+                fontSize: 22,
                 onPressed: () {
                   if (answersGuess[_selectedIndex] == null) return;
                   if (_selectedIndex < _maxIndex - 1) {
