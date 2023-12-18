@@ -58,13 +58,31 @@ class _QuestionPageState extends State<QuestionPage> {
   }
 
   int getScore() {
-    int score = 0;
+    int scoreTotal = 0;
+
     for (int i = 0; i < _maxIndex; i++) {
-      if (quiz![i].correctAnswer == answersGuess[i]) {
-        score++;
+      if (answersGuess[i] == quiz![i].correctAnswer) {
+        // Si la réponse est correcte
+        int temps = timesAnswers[i];
+
+        if (temps <= 5000) {
+          // Meilleure note si la réponse est inférieure ou égale à 5s
+          scoreTotal += 100;
+        } else if (temps <= 30) {
+          // Calculer le score entre 5s et 30s
+          double pourcentage = 100 - ((temps - 5) / 25) * 100;
+          scoreTotal += pourcentage < 0 ? 0 : pourcentage.round();
+        } else {
+          // Réponse trop lente, pas de points
+          scoreTotal += 0;
+        }
+      } else {
+        // Mauvaise réponse, pas de points
+        scoreTotal += 0;
       }
     }
-    return score;
+
+    return scoreTotal;
   }
 
   @override
