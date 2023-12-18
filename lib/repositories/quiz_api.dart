@@ -11,10 +11,15 @@ class QuizApi {
   Future<List<Quiz>> getQuiz(String url) async {
     final http.Response response = await http.get(Uri.parse(baseUrl + url));
     if (response.statusCode == 200) {
+      final List<Quiz> quizzes = [];
       final dynamic json = jsonDecode(response.body);
-      if (json.containsKey('results') && json['response_code'] == 0) {
-        final List<String> results = json['results'];
-        return results.map((String e) => Quiz.fromQuiApiJson(jsonDecode(e))).toList();
+      if (json.containsKey('quizzes')) {
+        final List<dynamic> results = json['quizzes'];
+        for (Map<String, dynamic> result in results) {
+          final Quiz quiz = Quiz.fromQuiApiJson(result);
+          quizzes.add(quiz);
+        }
+        return quizzes;
       } else {
         throw Exception('No results');
       }
