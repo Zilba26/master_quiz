@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:master_quiz/ui/screens/choose_options.dart';
 import 'package:master_quiz/ui/screens/home.dart';
 
 void main() {
@@ -23,7 +22,7 @@ class _MyAppState extends State<MyApp> {
         useMaterial3: true,
       ),
       debugShowCheckedModeBanner: false,
-      home: const ChooseOptions(),
+      home: const Home(),
     );
   }
 }
