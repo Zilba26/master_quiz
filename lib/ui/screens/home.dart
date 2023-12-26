@@ -1,5 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:master_quiz/ui/components/main_button.dart';
+import 'package:master_quiz/ui/components/star_background.dart';
+import 'package:newton_particles/newton_particles.dart';
 
 import 'choose_options.dart';
 
@@ -13,12 +17,12 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
 
   bool launchAnimation = false;
-  final animationDuration = const Duration(seconds: 2);
+  final animationDuration = const Duration(seconds: 5);
 
   Future<void> goToChooseOptionsPage() async {
     Future.delayed(animationDuration, () {
-      Navigator.of(context).push(MaterialPageRoute(builder: (context) => const ChooseOptions()));
       launchAnimation = false;
+      Navigator.of(context).push(MaterialPageRoute(builder: (context) => const ChooseOptions()));
     });
     setState(() {
       launchAnimation = true;
@@ -29,6 +33,7 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     double height =  MediaQuery.of(context).size.height;
+    
     return Scaffold(
       body: Container(
         decoration: const BoxDecoration(
@@ -36,39 +41,64 @@ class _HomeState extends State<Home> {
         ),
         height: double.infinity,
         width: double.infinity,
-        child: Center(
-          child: Stack(
-            alignment: Alignment.topCenter,
-            children: [
-              AnimatedPositioned(
-                top: launchAnimation ? -400 : (height /2) - 187.5,
-                duration: animationDuration,
-                child: Align(
-                  alignment: Alignment.center,
-                  child: Image.asset("assets/images/fusee-detouree.png", width: width * 0.7,)
-                )
-              ),
-              Column(
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Padding(
-                    padding: EdgeInsets.only(top: 100),
-                    child: Text("Master Quiz", style: TextStyle(fontSize: 50, fontWeight: FontWeight.bold, color: Colors.white),),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 50),
-                    child: MainButton(
-                      onPressed:() {
-                        goToChooseOptionsPage();
-                      },
-                      text: 'Jouer',
-                      fontSize: 30,
+        child: StarBackground(
+          animated: launchAnimation,
+          child: Center(
+            child: Stack(
+              fit: StackFit.expand,
+              alignment: Alignment.topCenter,
+              children: [
+                Positioned(
+                  top: (height /2) - 187.5,
+                  child: Align(
+                    alignment: Alignment.center,
+                    child: Image.asset("assets/images/fusee-detouree.png", width: width * 0.7,)
+                  )
+                ),
+                !launchAnimation ? Column(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Padding(
+                      padding: EdgeInsets.only(top: 100),
+                      child: Text("Master Quiz", style: TextStyle(fontSize: 50, fontWeight: FontWeight.bold, color: Colors.white),),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 50),
+                      child: MainButton(
+                        onPressed:() {
+                          goToChooseOptionsPage();
+                        },
+                        text: 'Jouer',
+                        fontSize: 30,
+                      ),
+                    ),
+                  ],
+                ) : const SizedBox(),
+                launchAnimation ? Positioned.fill(
+                  //duration: const Duration(seconds: 1),
+                  top: (height /2) + 100,
+                  child: RotatedBox(
+                    quarterTurns: 2,
+                    child: Newton(
+                      activeEffects: [
+                        FountainEffect(
+                          particleConfiguration: ParticleConfiguration(
+                              shape: CircleShape(),
+                              size: const Size(10, 10),
+                              color: const SingleParticleColor(
+                                  color: Colors.white
+                              )
+                          ),
+                          effectConfiguration: const EffectConfiguration(),
+                          width: width * 0.1,
+                        )
+                      ],
                     ),
                   ),
-                ],
-              ),
-            ],
+                ) : Container(),
+              ],
+            ),
           ),
         ),
       ),
