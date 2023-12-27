@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:master_quiz/ui/components/main_button.dart';
 import 'package:master_quiz/ui/components/star_background.dart';
 import 'package:newton_particles/newton_particles.dart';
@@ -17,12 +19,37 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
 
   bool launchAnimation = false;
-  final animationDuration = const Duration(seconds: 5);
+  bool rocketAnimation = false;
+  final animationDuration = const Duration(seconds: 4);
+  final rocketAnimationDuration = const Duration(seconds: 1);
+  late ui.Image image;
+
+  @override
+  initState() {
+    super.initState();
+    rootBundle.load("assets/smoke.png").then((value) {
+      final list = Uint8List.view(value.buffer);
+      final completer = Completer<ui.Image>();
+      ui.decodeImageFromList(list, completer.complete);
+      completer.future.then((image) {
+        setState(() {
+          this.image = image;
+        });
+      });
+    });
+  }
 
   Future<void> goToChooseOptionsPage() async {
     Future.delayed(animationDuration, () {
-      launchAnimation = false;
-      Navigator.of(context).push(MaterialPageRoute(builder: (context) => const ChooseOptions()));
+      setState(() {
+        rocketAnimation = true;
+      });
+      Future.delayed(rocketAnimationDuration, () {
+        setState(() {
+          launchAnimation = false;
+        });
+        Navigator.of(context).push(MaterialPageRoute(builder: (context) => const ChooseOptions()));
+      });
     });
     setState(() {
       launchAnimation = true;
@@ -33,7 +60,7 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     double height =  MediaQuery.of(context).size.height;
-    
+
     return Scaffold(
       body: Container(
         decoration: const BoxDecoration(
@@ -48,11 +75,12 @@ class _HomeState extends State<Home> {
               fit: StackFit.expand,
               alignment: Alignment.topCenter,
               children: [
-                Positioned(
-                  top: (height /2) - 187.5,
+                AnimatedPositioned(
+                  top: rocketAnimation ? -400 : (height /2) - 187.5,
+                  duration: rocketAnimationDuration,
                   child: Align(
                     alignment: Alignment.center,
-                    child: Image.asset("assets/images/fusee-detouree.png", width: width * 0.7,)
+                    child: Image.asset("assets/fusee-detouree.png", width: width * 0.7,)
                   )
                 ),
                 !launchAnimation ? Column(
@@ -75,7 +103,7 @@ class _HomeState extends State<Home> {
                     ),
                   ],
                 ) : const SizedBox(),
-                launchAnimation ? Positioned.fill(
+                launchAnimation && !rocketAnimation ? Positioned.fill(
                   //duration: const Duration(seconds: 1),
                   top: (height /2) + 100,
                   child: RotatedBox(
@@ -84,13 +112,16 @@ class _HomeState extends State<Home> {
                       activeEffects: [
                         FountainEffect(
                           particleConfiguration: ParticleConfiguration(
-                              shape: CircleShape(),
-                              size: const Size(10, 10),
-                              color: const SingleParticleColor(
-                                  color: Colors.white
-                              )
+                            shape: ImageShape(image),
+                            size: const Size(100, 100),
+                            color: const SingleParticleColor(
+                              color: Colors.grey
+                            )
                           ),
-                          effectConfiguration: const EffectConfiguration(),
+                          effectConfiguration: const EffectConfiguration(
+                            emitDuration: 50,
+                            maxDistance: 100
+                          ),
                           width: width * 0.1,
                         )
                       ],
