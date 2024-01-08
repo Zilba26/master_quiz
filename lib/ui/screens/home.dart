@@ -20,7 +20,7 @@ class _HomeState extends State<Home> {
 
   bool launchAnimation = false;
   bool rocketAnimation = false;
-  final animationDuration = const Duration(seconds: 4);
+  final animationDuration = const Duration(seconds: 3);
   final rocketAnimationDuration = const Duration(seconds: 1);
   late ui.Image image;
 
@@ -47,6 +47,7 @@ class _HomeState extends State<Home> {
       Future.delayed(rocketAnimationDuration, () {
         setState(() {
           launchAnimation = false;
+          rocketAnimation = false;
         });
         Navigator.of(context).push(MaterialPageRoute(builder: (context) => const ChooseOptions()));
       });
