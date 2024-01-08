@@ -3,6 +3,7 @@ import 'package:master_quiz/models/difficulty.dart';
 import 'package:master_quiz/models/quiz.dart';
 import 'package:master_quiz/repositories/quiz_api.dart';
 import 'package:master_quiz/ui/components/main_button.dart';
+import 'package:master_quiz/ui/components/record_dialog.dart';
 import 'package:stop_watch_timer/stop_watch_timer.dart';
 
 import '../../constantes.dart';
@@ -21,9 +22,11 @@ class QuestionPage extends StatefulWidget {
 
 class _QuestionPageState extends State<QuestionPage> {
 
-  List<Quiz>? quiz;
+  late List<Quiz> quiz;
   int _selectedIndex = 0;
   int _maxIndex = 10;
+  bool _canNext = false;
+  bool isLoading = true;
   final StopWatchTimer _stopwatch = StopWatchTimer();
 
   late List<String?> answersGuess;
@@ -52,17 +55,31 @@ class _QuestionPageState extends State<QuestionPage> {
   Future<void> loadQuiz() async {
     QuizApi quizApi = QuizApi();
     quiz = await quizApi.getQuizByCategoryAndDifficulty(widget.category, widget.difficulty, _maxIndex);
-    if (quiz!.length < _maxIndex) _maxIndex = quiz!.length;
+    if (quiz.length < _maxIndex) _maxIndex = quiz.length;
     answersGuess = List.generate(_maxIndex, (index) => null);
     _stopwatch.onStartTimer();
-    setState(() {});
+    setState(() {
+      isLoading = false;
+    });
+  }
+
+  Color _getBorderAnswerBorderColor(String answer) {
+    if (_canNext) {
+      if (answer == quiz[_selectedIndex].correctAnswer) {
+        return Colors.green;
+      }
+      if (answer == answersGuess[_selectedIndex]) {
+        return Colors.red;
+      }
+    }
+    return Colors.grey;
   }
 
   int getScore() {
     int scoreTotal = 0;
 
     for (int i = 0; i < _maxIndex; i++) {
-      if (answersGuess[i] == quiz![i].correctAnswer) {
+      if (answersGuess[i] == quiz[i].correctAnswer) {
         // Si la réponse est correcte
         int temps = timesAnswers[i];
 
@@ -90,11 +107,11 @@ class _QuestionPageState extends State<QuestionPage> {
   Widget build(BuildContext context) {
     AppBar appBar = AppBar();
     return Scaffold(
-      body: quiz == null ? const Center(child: CircularProgressIndicator()) : Container(
+      body: Container(
         color: backgroundColor,
         width: double.infinity,
         height: double.infinity,
-        child: Padding(
+        child: isLoading ? const Center(child: CircularProgressIndicator()) : Padding(
           padding: const EdgeInsets.symmetric( horizontal: 32.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -131,10 +148,11 @@ class _QuestionPageState extends State<QuestionPage> {
                 ],
               ),
               const Divider(height: 50,),
-              Text(quiz![_selectedIndex].question, style: const TextStyle(color: Colors.white, fontSize: 25)),
+              Text(quiz[_selectedIndex].question, style: const TextStyle(color: Colors.white, fontSize: 25)),
               Column(
-                children: quiz![_selectedIndex].allAnswers.map((answer) => GestureDetector(
+                children: quiz[_selectedIndex].allAnswers.map((answer) => GestureDetector(
                   onTap: () {
+                    if (_canNext) return;
                     setState(() {
                       answersGuess[_selectedIndex] = answer;
                     });
@@ -144,7 +162,7 @@ class _QuestionPageState extends State<QuestionPage> {
                     margin: const EdgeInsets.symmetric(vertical: 10),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
-                      border: Border.all(color: Colors.grey.withOpacity(0.5), width: 4)
+                      border: Border.all(color: _getBorderAnswerBorderColor(answer).withOpacity(0.5), width: 4)
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -174,56 +192,38 @@ class _QuestionPageState extends State<QuestionPage> {
               const Spacer(),
               MainButton(
                 fontSize: 22,
-                onPressed: () {
+                onPressed: () async {
                   if (answersGuess[_selectedIndex] == null) return;
-                  if (_selectedIndex < _maxIndex - 1) {
-                    setState(() {
-                      _selectedIndex++;
+                  if (_canNext) {
+                    if (_selectedIndex < _maxIndex - 1) {
+                      setState(() {
+                        _selectedIndex++;
+                        _stopwatch.onResetTimer();
+                        _stopwatch.onStartTimer();
+                        _canNext = false;
+                      });
+                    } else {
                       timesAnswers.add(_stopwatch.rawTime.value);
-                      _stopwatch.onResetTimer();
-                      _stopwatch.onStartTimer();
-                    });
-                  } else {
-                    timesAnswers.add(_stopwatch.rawTime.value);
-                    _stopwatch.onStopTimer();
-                    showDialog(
-                      context: context,
-                      builder: (context) {
-                        return AlertDialog(
-                          title: const Text('Quiz terminé'),
-                          content: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text("Score: ${getScore()}", style: const TextStyle(fontSize: 25, fontWeight: FontWeight.bold),),
-                              const SizedBox(height: 20,),
-                              const Text("Vous avez battu votre record", style: TextStyle(fontSize: 16),),
-                              const SizedBox(height: 10,),
-                              const Text("Record: TODO", style: TextStyle(fontSize: 16),)
-                            ],
-                          ),
-                          actionsAlignment: MainAxisAlignment.center,
-                          actions: [
-                            TextButton(
-                              onPressed: () {
-                                Navigator.pop(context);
-                                //Navigator.pop(context);
-                              },
-                              child: const Text('Accueil')
-                            ),
-                            TextButton(
-                              onPressed: () {
-                                Navigator.pop(context);
-                                resetGame();
-                              },
-                              child: const Text('Rejouer')
-                            )
-                          ],
-                        );
+                      _stopwatch.onStopTimer();
+                      bool result = await showDialog(
+                        context: context,
+                        builder: (context) {
+                          return RecordDialog(score: getScore());
+                        }
+                      );
+                      if (result) {
+                        resetGame();
                       }
-                    );
+                    }
+                  } else {
+                    setState(() {
+                      _canNext = true;
+                      timesAnswers.add(_stopwatch.rawTime.value);
+                      _stopwatch.onStopTimer();
+                    });
                   }
                 },
-                text: 'Next',
+                text: _canNext ? 'Next' : 'Valider',
               ),
               const SizedBox(height: 50,),
             ],
