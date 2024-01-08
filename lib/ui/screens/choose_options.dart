@@ -20,7 +20,7 @@ class _ChooseOptionsState extends State<ChooseOptions> {
       body: Container(
         decoration: const BoxDecoration(
           image: DecorationImage(
-            image: AssetImage("assets/images/fusee.png"),
+            image: AssetImage("assets/fusee.png"),
             fit: BoxFit.cover,
           ),
         ),

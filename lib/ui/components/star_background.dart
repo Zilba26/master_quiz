@@ -10,7 +10,7 @@ class StarBackground extends StatelessWidget {
   StarBackground({super.key, required this.child, required this.animated});
 
   final SpriteSheet sparkleSpriteSheet = SpriteSheet(
-    image: const AssetImage('assets/images/particle-21x23.png'),
+    image: const AssetImage('assets/particle-21x23.png'),
     frameWidth: 21,
     length: 13,
   );
