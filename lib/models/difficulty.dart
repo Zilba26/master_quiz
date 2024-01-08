@@ -8,4 +8,18 @@ enum Difficulty {
   });
 
   final String key;
+
+  @override
+  String toString() {
+    switch (this) {
+      case Difficulty.easy:
+        return 'Facile';
+      case Difficulty.medium:
+        return 'Normal';
+      case Difficulty.hard:
+        return 'Difficile';
+      default:
+        return '';
+    }
+  }
 }

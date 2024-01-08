@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:master_quiz/models/difficulty.dart';
 import 'package:master_quiz/ui/components/main_button.dart';
 import 'package:master_quiz/models/category.dart';
+import 'package:master_quiz/ui/components/star_background.dart';
+import 'package:master_quiz/ui/screens/question_page.dart';
 
 import '../../constantes.dart';
 
@@ -12,11 +15,11 @@ class ChooseOptions extends StatefulWidget {
 }
 
 class _ChooseOptionsState extends State<ChooseOptions> {
-  List<String> categories = Category.values.map((e) => e.toString()).toList();
-  List<String> difficulties = ['Facile', 'Moyen', 'Difficile'];
+  List<Category> categories = Category.values;
+  List<Difficulty> difficulties = Difficulty.values;
 
-  String selectedCategory = Category.all.toString();
-  String selectedDifficulty = 'Facile';
+  Category selectedCategory = Category.all;
+  Difficulty selectedDifficulty = Difficulty.easy;
 
   @override
   Widget build(BuildContext context) {
@@ -25,67 +28,71 @@ class _ChooseOptionsState extends State<ChooseOptions> {
         color: backgroundColor,
         height: double.infinity,
         width: double.infinity,
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Text(
-                'Sélectionnez la catégorie',
-                style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold, color: Colors.white),
-              ),
-              const SizedBox(height: 20.0),
-              // Sélecteur de catégorie
-              DropdownButton<String>(
-                value: selectedCategory,
-                style: const TextStyle(color: Colors.white),
-                dropdownColor: bordersColor,
-                onChanged: (String? newValue) {
-                  setState(() {
-                    selectedCategory = newValue!;
-                  });
-                },
-                items: categories.map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
-              ),
-              const Text(
-                'Sélectionnez la difficulté',
-                style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold, color: Colors.white),
-              ),
-              const SizedBox(height: 10.0),
-              // Sélecteur de difficulté
-              DropdownButton<String>(
-                value: selectedDifficulty,
-                style: const TextStyle(color: Colors.white),
-                dropdownColor: bordersColor,
-                onChanged: (String? newValue) {
-                  setState(() {
-                    selectedDifficulty = newValue!;
-                  });
-                },
-                items: difficulties.map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
-              ),
-              const SizedBox(height: 20.0),
-              MainButton(
-                text: 'Jouer',
-                fontSize: 30.0,
-                onPressed: () {
-                  Navigator.pushNamed(context, "game", arguments: {
-                    'category': selectedCategory,
-                    'difficulty': selectedDifficulty
-                  }
-                  );
-              },
-              ),
-            ],
+        child: StarBackground(
+          animated: false,
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+
+              children: [
+                const Text(
+                  'Sélectionnez la catégorie',
+                  style: TextStyle(fontSize: 25.0, fontWeight: FontWeight.bold, color: Colors.white),
+                ),
+                const SizedBox(height: 20.0),
+                // Sélecteur de catégorie
+                DropdownButton<Category>(
+                  value: selectedCategory,
+                  style: const TextStyle(fontSize: 20.0, color: Colors.white),
+                  dropdownColor: bordersColor,
+                  onChanged: (Category? newValue) {
+                    setState(() {
+                      selectedCategory = newValue!;
+                    });
+                  },
+                  items: categories.map<DropdownMenuItem<Category>>((Category value) {
+                    return DropdownMenuItem<Category>(
+                      value: value,
+                      child: Text(value.toString()),
+                    );
+                  }).toList(),
+                ),
+                const Text(
+                  'Sélectionnez la difficulté',
+                  style: TextStyle(fontSize: 25.0, fontWeight: FontWeight.bold, color: Colors.white),
+                ),
+                const SizedBox(height: 10.0),
+                // Sélecteur de difficulté
+                DropdownButton<Difficulty>(
+                  value: selectedDifficulty,
+                  style: const TextStyle(fontSize: 20.0, color: Colors.white),
+                  dropdownColor: bordersColor,
+                  onChanged: (Difficulty? newValue) {
+                    setState(() {
+                      selectedDifficulty = newValue!;
+                    });
+                  },
+                  items: difficulties.map<DropdownMenuItem<Difficulty>>((Difficulty value) {
+                    return DropdownMenuItem<Difficulty>(
+                      value: value,
+                      child: Text(value.toString()),
+                    );
+                  }).toList(),
+                ),
+                const SizedBox(height: 20.0),
+                MainButton(
+                  text: 'Jouer',
+                  fontSize: 30.0,
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => QuestionPage(category: selectedCategory, difficulty: selectedDifficulty),
+                      ),
+                    );
+                  },
+                ),
+              ],
+            ),
           ),
         ),
       ),
