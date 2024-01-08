@@ -32,54 +32,79 @@ class _ChooseOptionsState extends State<ChooseOptions> {
           animated: false,
           child: Center(
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                const Text(
-                  'Sélectionnez la catégorie',
-                  style: TextStyle(fontSize: 25.0, fontWeight: FontWeight.bold, color: Colors.white),
+                Column(
+                  children: [
+                    const SizedBox(height: 70.0),
+                    const Text(
+                      'Sélectionnez la catégorie',
+                      style: TextStyle(fontSize: 25.0, fontWeight: FontWeight.bold, color: Colors.white),
+                    ),
+                    const SizedBox(height: 20.0),
+                    // Sélecteur de catégorie
+                    Container(
+                      margin: const EdgeInsets.all(15.0),
+                      padding: const EdgeInsets.only(left: 10.0, right: 10.0),
+                      decoration: BoxDecoration(
+                          color: bordersColor,
+                          borderRadius: BorderRadius.circular(10.0)
+                      ),
+                      child: DropdownButton<Category>(
+                        value: selectedCategory,
+                        underline: const SizedBox(),
+                        style: const TextStyle(fontSize: 20.0, color: Colors.white),
+                        dropdownColor: bordersColor,
+                        onChanged: (Category? newValue) {
+                          setState(() {
+                            selectedCategory = newValue!;
+                          });
+                        },
+                        items: categories.map<DropdownMenuItem<Category>>((Category value) {
+                          return DropdownMenuItem<Category>(
+                            value: value,
+                            child: Text(value.toString()),
+                          );
+                        }).toList(),
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 20.0),
-                // Sélecteur de catégorie
-                DropdownButton<Category>(
-                  value: selectedCategory,
-                  style: const TextStyle(fontSize: 20.0, color: Colors.white),
-                  dropdownColor: bordersColor,
-                  onChanged: (Category? newValue) {
-                    setState(() {
-                      selectedCategory = newValue!;
-                    });
-                  },
-                  items: categories.map<DropdownMenuItem<Category>>((Category value) {
-                    return DropdownMenuItem<Category>(
-                      value: value,
-                      child: Text(value.toString()),
-                    );
-                  }).toList(),
+                Column(
+                  children: [
+                    const Text(
+                      'Sélectionnez la difficulté',
+                      style: TextStyle(fontSize: 25.0, fontWeight: FontWeight.bold, color: Colors.white),
+                    ),
+                    const SizedBox(height: 10.0),
+                    // Sélecteur de difficulté
+                    Container(
+                      margin: const EdgeInsets.all(15.0),
+                      padding: const EdgeInsets.only(left: 10.0, right: 10.0),
+                      decoration: BoxDecoration(
+                          color: bordersColor,
+                          borderRadius: BorderRadius.circular(10.0)
+                      ),
+                      child: DropdownButton<Difficulty>(
+                        value: selectedDifficulty,
+                        underline: const SizedBox(),
+                        style: const TextStyle(fontSize: 20.0, color: Colors.white),
+                        dropdownColor: bordersColor,
+                        onChanged: (Difficulty? newValue) {
+                          setState(() {
+                            selectedDifficulty = newValue!;
+                          });
+                        },
+                        items: difficulties.map<DropdownMenuItem<Difficulty>>((Difficulty value) {
+                          return DropdownMenuItem<Difficulty>(
+                            value: value,
+                            child: Text(value.toString()),
+                          );
+                        }).toList(),
+                      ),
+                    ),
+                  ],
                 ),
-                const Text(
-                  'Sélectionnez la difficulté',
-                  style: TextStyle(fontSize: 25.0, fontWeight: FontWeight.bold, color: Colors.white),
-                ),
-                const SizedBox(height: 10.0),
-                // Sélecteur de difficulté
-                DropdownButton<Difficulty>(
-                  value: selectedDifficulty,
-                  style: const TextStyle(fontSize: 20.0, color: Colors.white),
-                  dropdownColor: bordersColor,
-                  onChanged: (Difficulty? newValue) {
-                    setState(() {
-                      selectedDifficulty = newValue!;
-                    });
-                  },
-                  items: difficulties.map<DropdownMenuItem<Difficulty>>((Difficulty value) {
-                    return DropdownMenuItem<Difficulty>(
-                      value: value,
-                      child: Text(value.toString()),
-                    );
-                  }).toList(),
-                ),
-                const SizedBox(height: 20.0),
                 MainButton(
                   text: 'Jouer',
                   fontSize: 30.0,
