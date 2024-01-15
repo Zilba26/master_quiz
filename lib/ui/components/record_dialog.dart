@@ -46,7 +46,7 @@ class RecordDialog extends StatelessWidget {
               BlocBuilder<RecordCubit, Map<int, Map<int, int?>>>(
                 builder: (context, state) {
                   return Text(
-                    state[category.index]![difficulty.index]?.toString() ?? 'Aucun record',
+                    state[category.index]![difficulty.index] == null ? "Aucun" : state[category.index]![difficulty.index].toString(),
                     style: const TextStyle(fontSize: 22.0, color: Colors.white),
                   );
                 },
