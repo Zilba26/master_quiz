@@ -13,17 +13,19 @@ class RecordCubit extends Cubit<Map<int, Map<int, int?>>> {
     final Map<int, Map<int, int?>> records = state;
     records[category.index]![difficulty.index] = record;
     await preferencesRepository.saveRecord(record, category, difficulty);
+    print(record);
     emit(records);
   }
 
   Future<void> loadRecords() async {
     final Map<int, Map<int, int?>> records = state;
     for (Category category in Category.values) {
-      records[category.index] = <int, int>{};
+      records[category.index] = <int, int?>{};
       for (Difficulty difficulty in Difficulty.values) {
         records[category.index]![difficulty.index] = await preferencesRepository.loadRecord(category, difficulty);
       }
     }
+    print(records);
     emit(records);
   }
 
