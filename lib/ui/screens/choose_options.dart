@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:master_quiz/blocs/record_cubit.dart';
 import 'package:master_quiz/models/difficulty.dart';
 import 'package:master_quiz/ui/components/main_button.dart';
 import 'package:master_quiz/models/category.dart';
@@ -57,7 +59,25 @@ class _ChooseOptionsState extends State<ChooseOptions> {
                     MainDropdownButton(values: difficulties, onChange: (value) => selectedDifficulty = value!),
                   ],
                 ),
-                const SizedBox(height: 100),
+                const SizedBox(height: 75),
+                Column(
+                  children: [
+                    const Text(
+                      'Record Actuel',
+                      style: TextStyle(fontSize: 25.0, fontWeight: FontWeight.bold, color: Colors.white),
+                    ),
+                    const SizedBox(height: 10.0),
+                    BlocBuilder<RecordCubit, Map<int, Map<int, int?>>>(
+                      builder: (context, state) {
+                        return Text(
+                          state[selectedCategory.index]![selectedDifficulty.index]?.toString() ?? 'Aucun record',
+                          style: const TextStyle(fontSize: 22.0, color: Colors.white),
+                        );
+                      },
+                    )
+                  ],
+                ),
+                const SizedBox(height: 75),
                 MainButton(
                   text: 'Jouer',
                   fontSize: 30.0,
