@@ -8,6 +8,7 @@ import 'package:stop_watch_timer/stop_watch_timer.dart';
 
 import '../../constantes.dart';
 import '../../models/category.dart';
+import '../components/not_enough_questions.dart';
 
 class QuestionPage extends StatefulWidget {
 
@@ -49,6 +50,7 @@ class _QuestionPageState extends State<QuestionPage> {
     _selectedIndex = 0;
     await loadQuiz();
     timesAnswers.clear();
+    _canNext = false;
     setState(() {});
   }
 
@@ -111,7 +113,8 @@ class _QuestionPageState extends State<QuestionPage> {
         color: backgroundColor,
         width: double.infinity,
         height: double.infinity,
-        child: isLoading ? const Center(child: CircularProgressIndicator()) : Padding(
+        child: isLoading ? const Center(child: CircularProgressIndicator())
+            : (_maxIndex == 0 ? const NotEnoughQuestions() : Padding(
           padding: const EdgeInsets.symmetric( horizontal: 32.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -228,7 +231,7 @@ class _QuestionPageState extends State<QuestionPage> {
               const SizedBox(height: 50,),
             ],
           ),
-        ),
+        )),
       )
     );
   }
