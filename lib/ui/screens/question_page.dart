@@ -211,7 +211,7 @@ class _QuestionPageState extends State<QuestionPage> {
                       bool result = await showDialog(
                         context: context,
                         builder: (context) {
-                          return RecordDialog(score: getScore());
+                          return RecordDialog(score: getScore(), category: widget.category, difficulty: widget.difficulty);
                         }
                       );
                       if (result) {

@@ -13,7 +13,6 @@ class RecordCubit extends Cubit<Map<int, Map<int, int?>>> {
     final Map<int, Map<int, int?>> records = state;
     records[category.index]![difficulty.index] = record;
     await preferencesRepository.saveRecord(record, category, difficulty);
-    print(record);
     emit(records);
   }
 
