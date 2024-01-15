@@ -15,7 +15,7 @@ class PreferencesRepository {
     if (prefs.containsKey('record_${category.name}_${difficulty.name}')) {
       return prefs.getInt('record_${category.name}_${difficulty.name}')!;
     }
-    return 0;
+    return -1;
   }
 
 }

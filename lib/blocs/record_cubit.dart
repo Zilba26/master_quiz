@@ -4,24 +4,26 @@ import 'package:master_quiz/models/difficulty.dart';
 import '../models/category.dart';
 import '../repositories/preferences_repository.dart';
 
-/// Déclaration d'un "Cubit" pour stocker les records pour chaque catégorie
-class RecordCubit extends Cubit<List<int>> {
-  final PreferencesRepository preferencesRepository;
+class RecordCubit extends Cubit<Map<int, Map<int, int>>> {
+  final PreferencesRepository preferencesRepository = PreferencesRepository();
 
-  RecordCubit(this.preferencesRepository) : super([]);
+  RecordCubit() : super(<int, Map<int, int>>{});
 
-  /// Méthode pour sauvegarder un record en fonction de la catégorie
   Future<void> saveRecord(int record, Category category, Difficulty difficulty) async {
-    final List<int> records = state;
-    records[category.index] = record;
+    final Map<int, Map<int, int>> records = state;
+    records[category.index]![difficulty.index] = record;
     await preferencesRepository.saveRecord(record, category, difficulty);
     emit(records);
   }
 
-  /// Méthode pour charger les records en fonction de la catégorie
-  Future<void> loadRecords(Category category, Difficulty difficulty) async {
-    final List<int> records = state;
-    records[category.index] = await preferencesRepository.loadRecord(category, difficulty);
+  Future<void> loadRecords() async {
+    final Map<int, Map<int, int>> records = state;
+    for (Category category in Category.values) {
+      records[category.index] = <int, int>{};
+      for (Difficulty difficulty in Difficulty.values) {
+        records[category.index]![difficulty.index] = await preferencesRepository.loadRecord(category, difficulty);
+      }
+    }
     emit(records);
   }
 

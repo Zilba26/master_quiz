@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:master_quiz/blocs/record_cubit.dart';
 import 'package:master_quiz/ui/screens/home.dart';
 
 void main() {
+  final RecordCubit recordCubit = RecordCubit();
+  recordCubit.loadRecords();
   runApp(const MyApp());
 }
 
