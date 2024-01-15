@@ -1,4 +1,4 @@
-# master_quiz
+# Master Quiz
 
 Une application de quiz entre amis
 
