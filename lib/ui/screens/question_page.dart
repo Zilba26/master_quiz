@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:master_quiz/models/difficulty.dart';
 import 'package:master_quiz/models/quiz.dart';
 import 'package:master_quiz/repositories/quiz_api.dart';
@@ -6,6 +7,7 @@ import 'package:master_quiz/ui/components/main_button.dart';
 import 'package:master_quiz/ui/components/record_dialog.dart';
 import 'package:stop_watch_timer/stop_watch_timer.dart';
 
+import '../../blocs/record_cubit.dart';
 import '../../constantes.dart';
 import '../../models/category.dart';
 import '../components/not_enough_questions.dart';
@@ -193,40 +195,55 @@ class _QuestionPageState extends State<QuestionPage> {
                 )).toList(),
               ),
               const Spacer(),
-              MainButton(
-                fontSize: 22,
-                onPressed: () async {
-                  if (answersGuess[_selectedIndex] == null) return;
-                  if (_canNext) {
-                    if (_selectedIndex < _maxIndex - 1) {
-                      setState(() {
-                        _selectedIndex++;
-                        _stopwatch.onResetTimer();
-                        _stopwatch.onStartTimer();
-                        _canNext = false;
-                      });
-                    } else {
-                      timesAnswers.add(_stopwatch.rawTime.value);
-                      _stopwatch.onStopTimer();
-                      bool result = await showDialog(
-                        context: context,
-                        builder: (context) {
-                          return RecordDialog(score: getScore(), category: widget.category, difficulty: widget.difficulty);
+              BlocBuilder<RecordCubit, Map<int, Map<int, int?>>>(
+                builder: (context, state) {
+                  return MainButton(
+                    fontSize: 22,
+                    onPressed: () async {
+                      if (answersGuess[_selectedIndex] == null) return;
+                      if (_canNext) {
+                        if (_selectedIndex < _maxIndex - 1) {
+                          setState(() {
+                            _selectedIndex++;
+                            _stopwatch.onResetTimer();
+                            _stopwatch.onStartTimer();
+                            _canNext = false;
+                          });
+                        } else {
+                          timesAnswers.add(_stopwatch.rawTime.value);
+                          _stopwatch.onStopTimer();
+                          int score = getScore();
+                          bool? record = false;
+                          int? currentRecord = state[widget.category.index]![widget.difficulty.index];
+                          if (score > (currentRecord ?? -1)) {
+                            context.read<RecordCubit>().saveRecord(score, widget.category, widget.difficulty);
+                            record = true;
+                          } else if (score == (currentRecord ?? -1)) {
+                            record = null;
+                          }
+                          bool result = await showDialog(
+                            context: context,
+                            barrierDismissible: false,
+                            builder: (context) {
+                              return RecordDialog(score: score, maxScore: _maxIndex * 100,
+                                  category: widget.category, difficulty: widget.difficulty, isRecord: record);
+                            }
+                          );
+                          if (result) {
+                            resetGame();
+                          }
                         }
-                      );
-                      if (result) {
-                        resetGame();
+                      } else {
+                        setState(() {
+                          _canNext = true;
+                          timesAnswers.add(_stopwatch.rawTime.value);
+                          _stopwatch.onStopTimer();
+                        });
                       }
-                    }
-                  } else {
-                    setState(() {
-                      _canNext = true;
-                      timesAnswers.add(_stopwatch.rawTime.value);
-                      _stopwatch.onStopTimer();
-                    });
-                  }
+                    },
+                    text: _canNext ? 'Next' : 'Valider',
+                  );
                 },
-                text: _canNext ? 'Next' : 'Valider',
               ),
               const SizedBox(height: 50,),
             ],

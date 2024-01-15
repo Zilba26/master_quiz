@@ -24,7 +24,6 @@ class RecordCubit extends Cubit<Map<int, Map<int, int?>>> {
         records[category.index]![difficulty.index] = await preferencesRepository.loadRecord(category, difficulty);
       }
     }
-    print(records);
     emit(records);
   }
 

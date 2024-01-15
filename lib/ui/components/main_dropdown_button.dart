@@ -34,7 +34,9 @@ class _MainDropdownButtonState<T> extends State<MainDropdownButton> {
       ),
       child: DropdownButton<T>(
         value: selectedValue,
+        padding: const EdgeInsets.all(0.0),
         underline: const SizedBox(),
+        borderRadius: BorderRadius.circular(10.0),
         alignment: Alignment.center,
         icon: const SizedBox(),
         style: const TextStyle(fontSize: 20.0, color: Colors.white),
