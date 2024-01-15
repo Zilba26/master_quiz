@@ -172,7 +172,7 @@ class _QuestionPageState extends State<QuestionPage> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(answer, style: const TextStyle(color: Colors.white, fontSize: 20)),
+                        Flexible(child: Text(answer, style: const TextStyle(color: Colors.white, fontSize: 20))),
                         Container(
                           margin: const EdgeInsets.only(right: 14),
                           width: 30,
