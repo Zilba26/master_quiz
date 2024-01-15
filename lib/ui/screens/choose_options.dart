@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:master_quiz/models/difficulty.dart';
 import 'package:master_quiz/ui/components/main_button.dart';
 import 'package:master_quiz/models/category.dart';
+import 'package:master_quiz/ui/components/main_dropdown_button.dart';
 import 'package:master_quiz/ui/components/star_background.dart';
 import 'package:master_quiz/ui/screens/question_page.dart';
 
@@ -32,44 +33,20 @@ class _ChooseOptionsState extends State<ChooseOptions> {
           animated: false,
           child: Center(
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Column(
                   children: [
-                    const SizedBox(height: 70.0),
+                    const SizedBox(height: 40.0),
                     const Text(
                       'Sélectionnez la catégorie',
                       style: TextStyle(fontSize: 25.0, fontWeight: FontWeight.bold, color: Colors.white),
                     ),
-                    const SizedBox(height: 20.0),
-                    // Sélecteur de catégorie
-                    Container(
-                      margin: const EdgeInsets.all(15.0),
-                      padding: const EdgeInsets.only(left: 10.0, right: 10.0),
-                      decoration: BoxDecoration(
-                          color: bordersColor,
-                          borderRadius: BorderRadius.circular(10.0)
-                      ),
-                      child: DropdownButton<Category>(
-                        value: selectedCategory,
-                        underline: const SizedBox(),
-                        style: const TextStyle(fontSize: 20.0, color: Colors.white),
-                        dropdownColor: bordersColor,
-                        onChanged: (Category? newValue) {
-                          setState(() {
-                            selectedCategory = newValue!;
-                          });
-                        },
-                        items: categories.map<DropdownMenuItem<Category>>((Category value) {
-                          return DropdownMenuItem<Category>(
-                            value: value,
-                            child: Text(value.toString()),
-                          );
-                        }).toList(),
-                      ),
-                    ),
+                    const SizedBox(height: 30.0),
+                    MainDropdownButton(values: categories, onChange: (value) => selectedCategory = value!)
                   ],
                 ),
+                const SizedBox(height: 75),
                 Column(
                   children: [
                     const Text(
@@ -77,34 +54,10 @@ class _ChooseOptionsState extends State<ChooseOptions> {
                       style: TextStyle(fontSize: 25.0, fontWeight: FontWeight.bold, color: Colors.white),
                     ),
                     const SizedBox(height: 10.0),
-                    // Sélecteur de difficulté
-                    Container(
-                      margin: const EdgeInsets.all(15.0),
-                      padding: const EdgeInsets.only(left: 10.0, right: 10.0),
-                      decoration: BoxDecoration(
-                          color: bordersColor,
-                          borderRadius: BorderRadius.circular(10.0)
-                      ),
-                      child: DropdownButton<Difficulty>(
-                        value: selectedDifficulty,
-                        underline: const SizedBox(),
-                        style: const TextStyle(fontSize: 20.0, color: Colors.white),
-                        dropdownColor: bordersColor,
-                        onChanged: (Difficulty? newValue) {
-                          setState(() {
-                            selectedDifficulty = newValue!;
-                          });
-                        },
-                        items: difficulties.map<DropdownMenuItem<Difficulty>>((Difficulty value) {
-                          return DropdownMenuItem<Difficulty>(
-                            value: value,
-                            child: Text(value.toString()),
-                          );
-                        }).toList(),
-                      ),
-                    ),
+                    MainDropdownButton(values: difficulties, onChange: (value) => selectedDifficulty = value!),
                   ],
                 ),
+                const SizedBox(height: 100),
                 MainButton(
                   text: 'Jouer',
                   fontSize: 30.0,
