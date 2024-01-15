@@ -35,6 +35,7 @@ class _MainDropdownButtonState<T> extends State<MainDropdownButton> {
       child: DropdownButton<T>(
         value: selectedValue,
         underline: const SizedBox(),
+        alignment: Alignment.center,
         icon: const SizedBox(),
         style: const TextStyle(fontSize: 20.0, color: Colors.white),
         dropdownColor: bordersColor,
@@ -47,6 +48,7 @@ class _MainDropdownButtonState<T> extends State<MainDropdownButton> {
         items: widget.values.map<DropdownMenuItem<T>>((dynamic value) {
           return DropdownMenuItem<T>(
             value: value,
+            alignment: Alignment.center,
             child: Text(value.toString()),
           );
         }).toList(),

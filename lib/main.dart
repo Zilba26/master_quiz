@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:master_quiz/blocs/record_cubit.dart';
 import 'package:master_quiz/ui/screens/home.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   final RecordCubit recordCubit = RecordCubit();
   recordCubit.loadRecords();
-  runApp(const MyApp());
+  runApp(BlocProvider<RecordCubit>(
+      create: (_) => recordCubit,
+      child: const MyApp())
+  );
 }
 
 class MyApp extends StatefulWidget {
